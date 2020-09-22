@@ -1,0 +1,138 @@
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title id="title">0.npy</title>
+</head>
+<body>
+    <div class="float-container">
+        <div>
+            <span>Modes</span>
+            <button id="curtainButton">Curtain</button>
+            <button id="syncButton">Sync</button>
+        </div>
+        Image 1: &nbsp <select id="tileSourceSelect1"></select> <br>
+        Image 2: <select id="tileSourceSelect2"></select> <br>
+        <div class="float-child float-left">
+            <span class="image-title" id="leftImageText"></span> <br>
+        </div>
+        <div class="float-child float-right">
+            <span class="image-title" id="rightImageText"></span> <br>
+        </div>
+    </div>
+    <div class="openseadragon" id="viewer"></div>
+    <script src="scripts.js"></script>
+    <script src="/openseadragon/openseadragon.min.js"></script>
+    <script src="/openseadragon/openseadragon-curtain-sync.min.js"></script>
+    <script type="text/javascript">
+        var minIter = 1003200;
+        var maxIter = 1104000;
+        var iterIncrement = 4800;
+
+        var modelName = "he2tri";
+        var imagePrefix = 0;
+
+        var allTileSources = [];
+        // add orig image sources
+        allTileSources.push("orig/he/images/" + imagePrefix + ".dzi");
+        allTileSources.push("orig/tri/images/" + imagePrefix + "_tri.dzi");
+
+        // add model's tile sources
+        for (var i = minIter; i <= maxIter; i += iterIncrement) {
+            allTileSources.push(modelName + "/test_latest_iter" + i + "/images/" + imagePrefix + "_converted.dzi");
+        }
+        console.log(allTileSources);
+        document.getElementById("title").innerHTML = imagePrefix + ".npy";
+
+        var viewerImages = [];
+        for (var i = 0; i < allTileSources.length; i++) {
+            viewerImages.push({
+                key: allTileSources[i],
+                tileSource: allTileSources[i],
+            });
+        }
+        // create viewers
+        var viewer = new CurtainSyncViewer({
+            mode: 'sync',
+            container: document.getElementById("viewer"),
+            images: viewerImages,
+        });
+
+        var curtainButton = document.getElementById("curtainButton");
+        var syncButton = document.getElementById("syncButton");
+        curtainButton.onclick = function() {
+            viewer.setMode("curtain");
+        };
+        syncButton.onclick = function() {
+            viewer.setMode("sync");
+        };
+
+
+        // setup drop-down menus
+        var tileSourceSelect1 = document.getElementById("tileSourceSelect1");
+        var tileSourceSelect2 = document.getElementById("tileSourceSelect2");
+        for (var i = 0; i < allTileSources.length; i++) {
+            tileSourceSelect1.appendChild(new Option(allTileSources[i], allTileSources[i]));
+            tileSourceSelect2.appendChild(new Option(allTileSources[i], allTileSources[i]));
+        }
+
+        // default images shown
+        var image1 = allTileSources[0];
+        var image2 = allTileSources[1];
+        viewer.setImageShown(image1, true)
+        viewer.setImageShown(image2, true)
+        tileSourceSelect1.value = image1;
+        tileSourceSelect2.value = image2;
+        var leftImageText = document.getElementById("leftImageText");
+        var rightImageText = document.getElementById("rightImageText");
+        leftImageText.innerHTML = image1;
+        rightImageText.innerHTML = image2;
+
+        function setImageOrderText() {
+            if (allTileSources.indexOf(image1) < allTileSources.indexOf(image2)) {
+                leftImageText.innerHTML = image1;
+                rightImageText.innerHTML = image2;
+            } else {
+                leftImageText.innerHTML = image2;
+                rightImageText.innerHTML = image1;
+            }
+        }
+
+        // setup dropdown menu actions
+        tileSourceSelect1.onchange = function(a) {
+            console.log("Left image:", this.value);
+            if (this.value != image1 && this.value != image2) {
+                var curZoom = viewer.getZoom();
+
+                viewer.setImageShown(image1, false);
+                image1 = this.value;
+                viewer.setImageShown(image1, true);
+                setTimeout(function() {
+                    viewer.setZoom(curZoom);
+                }, 100);
+
+                setImageOrderText();
+            } else {
+                console.log("EXCEPTION: Selected image is already displayed.");
+            }
+        }
+        tileSourceSelect2.onchange = function(a) {
+            console.log("Image:", this.value);
+            if (this.value != image1 && this.value != image2) {
+                var curZoom = viewer.getZoom();
+
+                viewer.setImageShown(image2, false);
+                image2 = this.value;
+                viewer.setImageShown(image2, true);
+                setTimeout(function() {
+                    viewer.setZoom(curZoom);
+                }, 100);
+
+                setImageOrderText();
+            } else {
+                console.log("EXCEPTION: Selected image is already displayed.");
+            }
+        }
+
+    </script>
+</body>
+</html>

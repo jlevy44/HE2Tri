@@ -1,0 +1,28 @@
+.openseadragon {
+    border: 3px solid #000;
+	height: 85%;
+}
+
+.float-container {
+    /* border: 1px solid #F00; */
+    overflow: auto;
+}
+
+.float-child {
+    width: 49%;
+    /* border: 1px solid #000; */
+    text-align: center;
+    margin: 0.5% 0;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.image-title {
+    font-weight: bold;
+}

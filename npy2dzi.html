@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>{REPLACE_title}</title>
+</head>
+<body>
+    <script src="/openseadragon/openseadragon.min.js"></script>
+    <div style="width: 100%; height: 100%">
+        <div id="openseadragon1" style="width: 100%; height: 100%";></div>
+        <!-- <div id="openseadragon2" style="width: 40%; height: 100%";></div> -->
+    </div>
+    <script type="text/javascript">
+        var viewer1 = OpenSeadragon({
+            id: "openseadragon1",
+            prefixUrl: "/openseadragon/images/",
+            tileSources: "{REPLACE_wsi_prefix}.dzi",
+
+            minZoomImageRatio: 0.5,
+            maxZoomImageRatio: Infinity,
+
+            defaultZoomLevel: 1,
+            showReferenceStrip: true,
+            showNavigator: true,
+            // debugMode: true,
+        });
+        // var viewer2 = OpenSeadragon({
+        //     id: "openseadragon2",
+        //     prefixUrl: "/openseadragon/images/",
+        //     tileSources: "{REPLACE_wsi_prefix_orig}.dzi",
+        //
+        //     minZoomImageRatio: 0.5,
+        //     maxZoomImageRatio: Infinity,
+        //
+        //     defaultZoomLevel: 1,
+        //     showReferenceStrip: true,
+        //     showNavigator: true,
+        //     // debugMode: true,
+        // });
+    </script>
+</body>
+</html>
