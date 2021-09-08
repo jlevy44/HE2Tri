@@ -54,22 +54,58 @@ if __name__ == '__main__':
 	if opt.iter_start < 0:
 		opt.iter_start = opt.load_iter
 		opt.iter_incr = 1
-	for iter in range(start_iter, total_iter, opt.iter_incr):
-		opt.load_iter = iter
-		print("iter", opt.load_iter)
+	if opt.dataset_mode!="wsi":
+		for iter in range(start_iter, total_iter, opt.iter_incr):
+			opt.load_iter = iter
+			print("iter", opt.load_iter)
+			ITER_START_TIME = time.time()
+			dataset.dataset.reset()
+			# create save location for results
+			subfolder_name = '{}_{}'.format(opt.phase, opt.epoch)
+			if True: # opt.load_iter > 0:  # load_iter is 0 by default
+				subfolder_name = '{:s}_iter{:d}'.format(subfolder_name, opt.load_iter)
+			web_dir = os.path.join(opt.results_dir, opt.name, subfolder_name)
+			new_wsi_filename = opt.wsi_name.replace('.npy', '_converted.npy')
+			save_path = os.path.join(web_dir, "images", new_wsi_filename)
+			print('save_path', save_path)
+			print('creating web directory', web_dir)
+			webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
+			model = create_model(opt)      # create a model given opt.model and other options
+			model.setup(opt)               # regular setup: load and print networks; create schedulers
+			# test with eval mode. This only affects layers like batchnorm and dropout.
+			# For [pix2pix]: we use batchnorm and dropout in the original pix2pix. You can experiment it with and without eval() mode.
+			# For [CycleGAN]: It should not affect CycleGAN as CycleGAN uses instancenorm without dropout.
+			if opt.eval:
+				model.eval()
+
+			output=[]
+			for i, data in enumerate(dataset):
+				model.set_input(data)  # unpack data from data loader
+				model.test()           # run inference
+				img=((model.fake.detach().cpu().numpy()[0].transpose((1,2,0)) + 1.) / 2. * 255.).astype(np.uint8)
+				dataset.dataset.push_image(i, img)
+				# if i % 50 == 0:
+				# 	print('processing {} - th patch'.format(i))
+			img_new = dataset.dataset.apply_mask()
+			np.save(save_path, img_new)
+			# subprocess.call("python npy2dzi.py --wsi_name {} --web_dir {} --shrink_factor {}".format(new_wsi_filename, web_dir, opt.shrink_factor), shell=True)
+			print("Iter execution time (s)", time.time() - ITER_START_TIME)
+	elif opt.dataset_mode=="npy":
+		# opt.load_iter = iter
+		# print("iter", opt.load_iter)
 		ITER_START_TIME = time.time()
-		dataset.dataset.reset()
+		# dataset.dataset.reset()
 		# create save location for results
-		subfolder_name = '{}_{}'.format(opt.phase, opt.epoch)
-		if True: # opt.load_iter > 0:  # load_iter is 0 by default
-			subfolder_name = '{:s}_iter{:d}'.format(subfolder_name, opt.load_iter)
-		web_dir = os.path.join(opt.results_dir, opt.name, subfolder_name)
-		new_wsi_filename = opt.wsi_name.replace('.npy', '_converted.npy')
-		save_path = os.path.join(web_dir, "images", new_wsi_filename)
-		print('save_path', save_path)
-		print('creating web directory', web_dir)
-		webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
-		model = create_model(opt)      # create a model given opt.model and other options
+		# subfolder_name = '{}_{}'.format(opt.phase, opt.epoch)
+		# if True: # opt.load_iter > 0:  # load_iter is 0 by default
+		# 	subfolder_name = '{:s}_iter{:d}'.format(subfolder_name, opt.load_iter)
+		# web_dir = os.path.join(opt.results_dir, opt.name, subfolder_name)
+		save_path = os.path.join(opt.results_dir_wsi,os.path.basename(opt.wsi_name.replace('.npy', '_converted.npy')))
+		# save_path = os.path.join(web_dir, "images", new_wsi_filename)
+		# print('save_path', save_path)
+		# print('creating web directory', web_dir)
+		# webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
+		# model = create_model(opt)      # create a model given opt.model and other options
 		model.setup(opt)               # regular setup: load and print networks; create schedulers
 		# test with eval mode. This only affects layers like batchnorm and dropout.
 		# For [pix2pix]: we use batchnorm and dropout in the original pix2pix. You can experiment it with and without eval() mode.
@@ -78,14 +114,14 @@ if __name__ == '__main__':
 			model.eval()
 
 		output=[]
-		for i, data in enumerate(dataset):
+		for i, data in tqdm(enumerate(dataset),total=len(dataset)):
 			model.set_input(data)  # unpack data from data loader
 			model.test()           # run inference
 			img=((model.fake.detach().cpu().numpy()[0].transpose((1,2,0)) + 1.) / 2. * 255.).astype(np.uint8)
 			dataset.dataset.push_image(i, img)
 			# if i % 50 == 0:
 			# 	print('processing {} - th patch'.format(i))
-		img_new = dataset.dataset.apply_mask()
+		img_new = dataset.dataset.img_new
 		np.save(save_path, img_new)
 		# subprocess.call("python npy2dzi.py --wsi_name {} --web_dir {} --shrink_factor {}".format(new_wsi_filename, web_dir, opt.shrink_factor), shell=True)
 		print("Iter execution time (s)", time.time() - ITER_START_TIME)

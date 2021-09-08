@@ -16,6 +16,8 @@ class TestWSIOptions(BaseOptions):
         parser.add_argument('--bgr2rgb', action='store_true', help='change color.')
         parser.add_argument('--iter_start', type=int, default=-1, help='increments of iterations')
         parser.add_argument('--iter_incr', type=int, default=1, help='increments of iterations')
+        parser.add_argument('--results_dir_wsi', type=str, default='./results_wsi/', help='saves results for wsi here.')
+        # parser.add_argument('--model_path', type=str, default="", help='load model from path')
 
         # rewrite devalue values
         parser.set_defaults(model='test')

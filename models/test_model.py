@@ -63,7 +63,7 @@ class TestModel(BaseModel):
 
         We need to use 'single_dataset' dataset mode. It only load images from one domain.
         """
-        if self.opt.dataset_mode == "wsi":
+        if self.opt.dataset_mode in ["wsi",'npy']:
             self.real = input.to(self.device)
         else:
             self.real = input['A'].to(self.device)
