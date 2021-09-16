@@ -36,7 +36,7 @@ import numpy as np
 import cv2
 import subprocess
 import time
-import tqdm
+from tqdm import tqdm
 
 if __name__ == '__main__':
 	PROGRAM_START_TIME = time.time()
@@ -115,9 +115,9 @@ if __name__ == '__main__':
 			model.eval()
 
 		output=[]
-		print(dir(dataset))
-		print(dataset.dataset)
-		for i, data in tqdm(enumerate(dataset.dataset),total=len(dataset.dataset)):
+		# print(dir(dataset))
+		# print(dataset.dataset)
+		for i, data in tqdm(enumerate(dataset),total=len(dataset)):
 			model.set_input(data)  # unpack data from data loader
 			model.test()           # run inference
 			img=((model.fake.detach().cpu().numpy()[0].transpose((1,2,0)) + 1.) / 2. * 255.).astype(np.uint8)
