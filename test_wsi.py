@@ -115,7 +115,8 @@ if __name__ == '__main__':
 			model.eval()
 
 		output=[]
-		# print(dir(dataset))
+		print(dir(dataset))
+		print(dataset.dataset)
 		for i, data in tqdm(enumerate(dataset.dataset),total=len(dataset.dataset)):
 			model.set_input(data)  # unpack data from data loader
 			model.test()           # run inference
