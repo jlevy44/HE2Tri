@@ -54,7 +54,7 @@ if __name__ == '__main__':
 	if opt.iter_start < 0:
 		opt.iter_start = opt.load_iter
 		opt.iter_incr = 1
-	if opt.dataset_mode!="wsi":
+	if opt.dataset_mode=="wsi":
 		for iter in range(start_iter, total_iter, opt.iter_incr):
 			opt.load_iter = iter
 			print("iter", opt.load_iter)
