@@ -180,6 +180,7 @@ class BaseModel(ABC):
         Parameters:
             epoch (int) -- current epoch; used in the file name '%s_net_%s.pth' % (epoch, name)
         """
+        print(custom_names)
         print(self.model_names)
         for name in self.model_names:
             print(name)

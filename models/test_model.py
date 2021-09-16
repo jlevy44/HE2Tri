@@ -45,8 +45,8 @@ class TestModel(BaseModel):
         if opt.model_suffix == "G,G_A":
             self.netG = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG,
                                       opt.norm, not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids)
-            self.netG = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG,
-                                    opt.norm, not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids)
+            # self.netG = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG,
+            #                         opt.norm, not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids)
         else:
             self.netG = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG,
                                       opt.norm, not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids)
