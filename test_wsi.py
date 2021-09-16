@@ -36,7 +36,7 @@ import numpy as np
 import cv2
 import subprocess
 import time
-
+import tqdm
 
 if __name__ == '__main__':
 	PROGRAM_START_TIME = time.time()
