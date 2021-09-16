@@ -54,6 +54,7 @@ if __name__ == '__main__':
 	if opt.iter_start < 0:
 		opt.iter_start = opt.load_iter
 		opt.iter_incr = 1
+	model = create_model(opt)
 	if opt.dataset_mode=="wsi":
 		for iter in range(start_iter, total_iter, opt.iter_incr):
 			opt.load_iter = iter
@@ -70,7 +71,7 @@ if __name__ == '__main__':
 			print('save_path', save_path)
 			print('creating web directory', web_dir)
 			webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
-			model = create_model(opt)      # create a model given opt.model and other options
+	      # create a model given opt.model and other options
 			model.setup(opt)               # regular setup: load and print networks; create schedulers
 			# test with eval mode. This only affects layers like batchnorm and dropout.
 			# For [pix2pix]: we use batchnorm and dropout in the original pix2pix. You can experiment it with and without eval() mode.
