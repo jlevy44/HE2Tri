@@ -94,7 +94,7 @@ def get_patch_info(he,basename,mask,patch_size=512,dps=512,threshold=220):
 	return patch_info, mask2
 
 
-class NPYDataset(torch.utils.data.Dataset):
+class NPYDataset_old(torch.utils.data.Dataset):
 	def __init__(self,npy,bgr2rgb,opt,compression_factor=2.):
 		#assert compression_factor==1. # figure out!!!
 		self.compression_factor=compression_factor
