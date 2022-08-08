@@ -93,6 +93,7 @@ if __name__ == '__main__':
 				# subprocess.call("python npy2dzi.py --wsi_name {} --web_dir {} --shrink_factor {}".format(new_wsi_filename, web_dir, opt.shrink_factor), shell=True)
 				print("Iter execution time (s)", time.time() - ITER_START_TIME)
 		else:
+			ITER_START_TIME = time.time()
 			dataset.dataset.reset()
 			new_wsi_filename = opt.wsi_name.replace('.npy', '_converted.npy')
 			save_path = os.path.join(opt.results_dir_wsi, os.path.basename(new_wsi_filename))
